@@ -17,7 +17,7 @@ public class Task {
             }
         }
 
-        public void complete(boolean b){
-            this.completedOrNot = b;
+        public void toggle(){
+            this.completedOrNot = !completedOrNot;
         }
 }

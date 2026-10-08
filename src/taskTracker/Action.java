@@ -10,7 +10,7 @@ public class Action {
         String message;
         List<Task> tasks = new ArrayList<Task>();
         Scanner s = new Scanner(System.in);
-        while(true){System.out.printf("1. Добавить задачу%n2. Показать все%n3. Отметить выполненной%n4. Удалить%n0. Выход%n" );
+        while(true){System.out.printf("1. Добавить задачу%n2. Показать все%n3. Отметить выполненной и обратно.%n4. Удалить%n0. Выход%n" );
             select = s.nextInt();
             s.nextLine();
         switch (select){
@@ -21,14 +21,14 @@ public class Action {
                 }
             }
             case 3 ->{
-                System.out.println("Выбери из предложенного. Что было выполнено?");
+                System.out.println("Выбери из предложенного. Что отметить?");
                 for (int i = 0; i < tasks.size(); i++) {
                     System.out.println(i + " " + tasks.get(i));
                 }
                 System.out.println("Введи номер ");
                int i = s.nextInt();
-               tasks.get(i).complete(true);
-                System.out.println("Вы выбрали " + tasks.get(i) +  " Оно было отмечено сделанным." );
+               tasks.get(i).toggle();
+                System.out.println("Вы выбрали " + tasks.get(i) +  " Оно было отмечено." );
 
             }
             case 4 ->{
@@ -44,7 +44,7 @@ public class Action {
 
             }
             case 0 ->{
-                System.out.println("Досвидаия");
+                System.out.println("До свидания.");
              return;}
             }
         }
