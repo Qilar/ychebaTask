@@ -15,13 +15,40 @@ public class Action {
             s.nextLine();
         switch (select){
             case 1 -> tasks.add(Fabricas.fabricaTask(s.nextLine()));
-            case 2 -> tasks.forEach(a->System.out.println(a));
-            case 3 -> tasks.forEach(a -> a.complete(true));
-            case 4 -> tasks.removeAll(tasks);
-            case  0 -> {
-                System.out.println("Досвидаия"); return;
+            case 2 -> {
+                for (int i = 0; i < tasks.size(); i++) {
+                    System.out.println(i + " " + tasks.get(i));
+                }
             }
-        }}
-    }
+            case 3 ->{
+                System.out.println("Выбери из предложенного. Что было выполнено?");
+                for (int i = 0; i < tasks.size(); i++) {
+                    System.out.println(i + " " + tasks.get(i));
+                }
+                System.out.println("Введи номер ");
+               int i = s.nextInt();
+               tasks.get(i).complete(true);
+                System.out.println("Вы выбрали " + tasks.get(i) +  " Оно было отмечено сделанным." );
 
+            }
+            case 4 ->{
+                System.out.println("Выбери из предложенного. Что нужно удалить?");
+                for (int i = 0; i < tasks.size(); i++) {
+                    System.out.println(i + " " + tasks.get(i));
+                }
+                System.out.println("Введи номер ");
+                int i = s.nextInt();
+                Task removed = tasks.get(i);
+                tasks.remove(i);
+                System.out.println("Вы выбрали " + removed +  " Оно было удалено." );
+
+            }
+            case 0 ->{
+                System.out.println("Досвидаия");
+             return;}
+            }
+        }
+    }
 }
+
+

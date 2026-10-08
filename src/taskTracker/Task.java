@@ -13,7 +13,7 @@ public class Task {
             if(completedOrNot == false){
                return "[ ] " + this.nameQuest;
             }else{
-               return "[X] " + this.nameQuest;
+               return  "[X] " + this.nameQuest;
             }
         }
 
