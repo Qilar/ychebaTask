@@ -4,154 +4,146 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Action {
-    public static int rInt(Scanner s) {
 
-        int num = s.nextInt();
-        s.nextLine();
-        return num;
+    private static final String SLOVAR_PATH =
+            "D:\\Projects\\ychebaTask\\src\\cryptoAnalizatorTask\\SlovarikDlyaAnalizatora";
+
+    // Читает целое число, пока пользователь не введёт именно число
+    public static int rInt(Scanner s) {
+        while (true) {
+            String stroka = s.nextLine().trim();
+            try {
+                return Integer.parseInt(stroka);
+            } catch (NumberFormatException e) {
+                System.out.println("Это не число. Введи целое число ещё раз:");
+            }
+        }
+    }
+
+    // Спрашивает текст: ручной ввод (можно много строк, с пустыми) или файл
+    private static String sprositTekst(Scanner s) throws IOException {
+        System.out.println("Введи 1 — если напишешь текст сам, или 2 — если возьмёшь его из файла:");
+        int v = rInt(s);
+        if (v == 1) {
+            System.out.println("Пиши текст. Пустые строки сохраняются как часть текста.");
+            System.out.println("Чтобы закончить ввод — напиши на отдельной строке /end и нажми Enter:");
+            StringBuilder sb = new StringBuilder();
+            while (true) {
+                String stroka = s.nextLine();
+                if (stroka.trim().equalsIgnoreCase("/end")) {
+                    break;
+                }
+                sb.append(stroka).append("\n");
+            }
+            return sb.toString();
+        } else if (v == 2) {
+            System.out.println("Введи путь к файлу:");
+            return FileManager.chtenie(s.nextLine());
+        }
+        System.out.println("Такого варианта нет, беру пустую строку");
+        return "";
+    }
+
+    // Спрашивает путь для сохранения и пишет результат в файл
+    private static void sohranitVFile(Scanner s, String result) throws IOException {
+        System.out.println("Введи путь к файлу, в который сохранить:");
+        String path = s.nextLine();
+        FileManager.zapis(path, result);
+        System.out.println("Готово! Результат сохранён в " + path);
+    }
+
+    // После операции: посмотреть результат, сохранить в файл или продолжить
+    private static String posleOperacii(Scanner s, String result) throws IOException {
+        System.out.println("Вот что получилось:\n" + result);
+        System.out.println("Введи 1 — чтобы сохранить результат в файл, или 2 — чтобы продолжить работать с этим текстом:");
+        int v = rInt(s);
+        if (v == 1) {
+            sohranitVFile(s, result);
+        }
+        return result;
     }
 
     public static void start() throws IOException {
-        String text = null;
-        String path = null;
-        String file = null;
-        int vibor = 0;
-        int sdvid = 0;
         Scanner s = new Scanner(System.in);
-        System.out.println("Привет тебя приветствует шифрователь цезаря!!!");
-        System.out.println("Размер нашего алфавита и символов для шифрования - " + Alphabet.size());
-        System.out.println("Например символ Р находится на " + Alphabet.getIndex('р') + " месте!");
-        System.out.println("А на тридцатом месте находится символ " + Alphabet.getChar(30));
-        System.out.println(Alphabet.getIndex('X') + "  а минус один означает что такого символа не обнаружено");
-        System.out.println("Чтобы начать введи 1 или введи 0 для выхода из программы");
-        vibor = rInt(s);
+        String tekst = null; // текущий текст, с которым работаем
 
-        if (vibor == 0) {
-            System.out.println("До свидания, ждем вас снова!");
-            System.exit(0);
-        } else if (vibor == 1) {
-            System.out.println("Что ты хочешь сделать, зашифровать текст или расшифровать его?");
-            System.out.println("Если хочешь зашифровать то введи 1 если расшифровать то введи 2 если хочешь взломать ключ введи 3:");
-            vibor = rInt(s);
-            if (vibor == 1) {
-                System.out.println("Ты хочешь зашифровать свой текст или возьмем его из файла?");
-                System.out.println("1- свой");
-                System.out.println("2- из файла");
-                vibor = rInt(s);
-                if (vibor == 1) {
-                    System.out.println("Введите текст который вы хотите зашифровать:");
-                    text = s.nextLine();
-                    System.out.println("Введите ключ для шифрования.");
-                    sdvid = rInt(s);
-                    file = Hofrovatel.Zahivrovat(text, sdvid);
-                    System.out.println("Поздравляю ваш текст успешно зашифрован что вы хотите с ним сделать сохранить в файл или посмотреть его?");
-                    System.out.println("Введите 1 чтобы посмотреть");
-                    System.out.println("Введите 2 чтобы сохранить в файл");
-                    vibor = rInt(s);
-                    if (vibor == 1) {
-                        System.out.println(file);
-                    } else if (vibor == 2) {
-                        System.out.println("Укажите путь к фалу который в который хотите сохранить текст");
-                        path = s.nextLine();
-                        FileManager.zapis(path, file);
-                    }
-                } else if (vibor == 2) {
-                    System.out.println("Введите путь к фалу:");
-                    path = s.nextLine();
-                    System.out.println("Введите ключ");
-                    sdvid = rInt(s);
-                    file = Hofrovatel.Zahivrovat(FileManager.chtenie(path), sdvid);
-                    System.out.println("Ваш зашифрованный текст \"" + file + "\"");
-                    System.out.println("Хотите сохранить его в файл 1- да 2- нет");
-                    vibor = rInt(s);
-                    if (vibor == 1) {
-                        System.out.println("Введите путь к фалу в котором хотите сохранить текст");
-                        path = s.nextLine();
-                        FileManager.zapis(path, file);
-                        System.out.println("Данные успешно сохранены в файл вот его содержимое \"" + file + "\"");
-                    } else if (vibor == 2) {
-                        System.out.println("Спасибо до свидания!");
-                        System.exit(0);
-                    }
-                }
+        System.out.println("╔══════════════════════════════════════════╗");
+        System.out.println("║       ШИФРОВАТЕЛЬ ЦЕЗАРЯ  v1.0           ║");
+        System.out.println("║  твой личный взломщик древних шифров     ║");
+        System.out.println("╚══════════════════════════════════════════╝");
+
+        while (true) {
+            System.out.println();
+            System.out.println("========= ГЛАВНОЕ МЕНЮ =========");
+            System.out.println("Введи 1 — чтобы зашифровать текст");
+            System.out.println("Введи 2 — чтобы расшифровать текст");
+            System.out.println("Введи 3 — чтобы взломать ключ");
+            System.out.println("Введи 0 — чтобы выйти из программы");
+            int vibor = rInt(s);
+
+            if (vibor == 0) {
+                System.out.println("Спасибо за работу! Возвращайся, если понадобится спрятать или открыть секреты.");
+                return;
+
+            } else if (vibor == 1) {
+                System.out.println("Зашифровать. Откуда взять текст?");
+                tekst = sprositTekst(s);
+                System.out.println("Введи ключ для шифрования:");
+                int klyuch = rInt(s);
+                tekst = Hofrovatel.Zahivrovat(tekst, klyuch);
+                tekst = posleOperacii(s, tekst);
 
             } else if (vibor == 2) {
-                System.out.println("Ты хочешь расшифровать свой текст или возьмем его из файла?");
-                System.out.println("1- свой");
-                System.out.println("2- из файла");
-                vibor = rInt(s);
-                if (vibor == 1) {
-                    System.out.println("Введите текст:");
-                    text = s.nextLine();
-                    System.out.println("Введите ключ:");
-                    sdvid = rInt(s);
-                    file = Hofrovatel.Rashivrovat(text, sdvid);
-                    System.out.println("Ваш расшифрованный текст \"" + file + "\"");
-                } else if (vibor == 2) {
-                    System.out.println("Введите путь к файлу");
-                    path = s.nextLine();
-                    System.out.println("Введите ключ");
-                    sdvid = rInt(s);
-                    file = Hofrovatel.Rashivrovat(FileManager.chtenie(path), sdvid);
-                    System.out.println("Ваш расшифрованный текст \"" + file + "\"");
-                    System.out.println("Хотите сохранить его в файл? 1- да 2 нет");
-                    vibor = rInt(s);
-                    if (vibor == 1) {
-                        System.out.println("Введите путь к файлу");
-                        path = s.nextLine();
-                        FileManager.zapis(path, file);
-                        System.out.println("Данные успешно сохранены в файл вот его содержимое \"" + file + "\"");
-                    } else {
-                        System.exit(0);
-                    }
-                }
-            } else if (vibor == 3) {
-                System.out.println("Как будем ломать ключь?");
-                System.out.println("1-Перебор(BruteForce)");
-                System.out.println("2-По словарю.");
-                System.out.println("3-По статистике.");
-                vibor = rInt(s);
-                if (vibor == 1) {
+                System.out.println("Расшифровать. Откуда взять текст?");
+                tekst = sprositTekst(s);
+                System.out.println("Введи ключ расшифровки:");
+                int klyuch = rInt(s);
+                tekst = Hofrovatel.Rashivrovat(tekst, klyuch);
+                tekst = posleOperacii(s, tekst);
 
-                    System.out.println("Ты хочешь ввести текст или взять его из файла?");
-                    System.out.println("1-написать");
-                    System.out.println("2-взять из файла");
-                    vibor = rInt(s);
-                    if (vibor == 1) {
-                        System.out.println("Напиши текст");
-                        text = s.nextLine();
-                        System.out.println("Вот варианты твоего ключа выбери правильный");
-                        Hofrovatel.vzlom(text);
-                    } else if (vibor == 2) {
-                        System.out.println("Введи путь к файлу");
-                        path = s.nextLine();
-                        System.out.println("Вот варианты твоего ключа выбери правильный");
-                        Hofrovatel.vzlom(FileManager.chtenie(path));
-                    }
-                } else if (vibor == 2) {
-                    System.out.println("Ты хочешь ввести текст или взять его из файла?");
-                    System.out.println("1 — написать самому");
-                    System.out.println("2 — из файла");
-                    vibor = rInt(s);
-                    if (vibor == 1) {
-                        System.out.println("Напиши текст для взлома:");
-                        text = s.nextLine();
-                    } else if (vibor == 2) {
-                        System.out.println("Введи путь к файлу:");
-                        path = s.nextLine();
-                        text = FileManager.chtenie(path);
-                    }
-                    String raw = FileManager.chtenie("D:\\Projects\\ychebaTask\\src\\cryptoAnalizatorTask\\SlovarikDlyaAnalizatora");
+            } else if (vibor == 3) {
+                System.out.println("Взлом. Выбери способ:");
+                System.out.println("Введи 1 — перебором (BruteForce)");
+                System.out.println("Введи 2 — по словарю");
+                System.out.println("Введи 3 — по статистике");
+                int sposob = rInt(s);
+
+                System.out.println("Откуда взять текст для взлома?");
+                tekst = sprositTekst(s);
+
+                if (sposob == 1) {
+                    System.out.println("Вот варианты твоего ключа, выбери правильный:");
+                    Hofrovatel.vzlom(tekst);
+
+                } else if (sposob == 2) {
+                    String raw = FileManager.chtenie(SLOVAR_PATH);
                     String[] wordsArray = raw.split(",");
                     java.util.HashSet<String> dictionary = new java.util.HashSet<>();
                     for (String word : wordsArray) {
                         dictionary.add(word.trim().toLowerCase());
                     }
                     System.out.println("[Отладка] Загружено слов в словарь: " + dictionary.size());
-                    Hofrovatel.vzlomSlovarem(text, dictionary);
+                    Hofrovatel.vzlomSlovarem(tekst, dictionary);
+
+                } else if (sposob == 3) {
+                    Hofrovatel.vzlomStatistike(tekst);
+
+                } else {
+                    System.out.println("Такого способа взлома нет, возвращаюсь в меню");
+                    continue;
                 }
+
+                // После взлома: расшифровываем найденным ключом и продолжаем с текстом
+                System.out.println("Введи найденный ключ, чтобы расшифровать текст и продолжить работу (или введи 0 — чтобы вернуться в меню):");
+                int klyuch = rInt(s);
+                if (klyuch != 0) {
+                    tekst = Hofrovatel.Rashivrovat(tekst, klyuch);
+                    tekst = posleOperacii(s, tekst);
+                }
+
+            } else {
+                System.out.println("Такого варианта нет, введи число из списка:");
             }
         }
     }
 }
-
